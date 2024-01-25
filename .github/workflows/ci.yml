@@ -45,4 +45,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: |
             ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Docker image for developing canisters on the Internet Computer.
+            org.opencontainers.image.description=An Internet Computer canister development environment.
