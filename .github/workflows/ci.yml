@@ -45,4 +45,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: |
             ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A canister development environment for the Internet Computer.
+            org.opencontainers.image.description=A canister development environment for the Internet Computer (ICP).
