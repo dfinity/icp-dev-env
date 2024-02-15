@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 mcr.microsoft.com/devcontainers/typescript-node:dev-20-bookworm
 
-ENV DFX_VERSION=0.16.1
+ENV DFX_VERSION=0.17.0
 
 # Install a basic environment needed for our build tools
 RUN apt -yq update && \
