@@ -28,4 +28,4 @@ To download a specific version, add `:<version>` at the end instead of `:latest`
 
 ## Creating a new Release
 To release a new version of both images, create a new tag with the corresponding version number.
-The CI pipeline will automatically build and push the new image to the GitHub Container Registry (ghcr.io).
+The CI pipeline will automatically build and push the new images to the GitHub Container Registry (ghcr.io).
