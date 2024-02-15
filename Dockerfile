@@ -3,9 +3,9 @@ FROM --platform=linux/amd64 rust:1.75-slim-bookworm
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.39.7
 ENV NODE_VERSION=21.5.0
-ENV DFX_VERSION=0.16.1
-ENV POCKET_IC_SERVER_HASH=69e1408347723dbaa7a6cd2faa9b65c42abbe861
-ENV POCKET_IC_PYTHON_VERSION=2.0.2
+ENV DFX_VERSION=0.17.0
+ENV POCKET_IC_SERVER_VERSION=3.0.1
+ENV POCKET_IC_PYTHON_VERSION=2.1.0
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip
@@ -27,6 +27,6 @@ RUN rustup target add wasm32-unknown-unknown
 RUN pip3 install pocket-ic==${POCKET_IC_PYTHON_VERSION} --break-system-packages
 
 # Download the PocketIC server
-RUN curl -sLO https://download.dfinity.systems/ic/${POCKET_IC_SERVER_HASH}/openssl-static-binaries/x86_64-linux/pocket-ic.gz
+RUN curl -Ls https://github.com/dfinity/pocketic/releases/download/${POCKET_IC_SERVER_VERSION}/pocket-ic-x86_64-linux.gz -o pocket-ic.gz
 RUN gzip -d pocket-ic.gz
 RUN chmod +x pocket-ic
