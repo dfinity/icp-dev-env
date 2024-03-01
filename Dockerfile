@@ -18,7 +18,9 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Install dfx
+ENV DFXVM_INIT_YES=true
 RUN sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN source "$HOME/.local/share/dfx/env"
 
 # Add wasm32-unknown-unknown target
 RUN rustup target add wasm32-unknown-unknown
