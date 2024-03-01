@@ -8,7 +8,7 @@ ENV POCKET_IC_SERVER_VERSION=3.0.1
 ENV POCKET_IC_PYTHON_VERSION=2.1.0
 
 RUN apt -yq update
-RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip
+RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip ssh
 
 # Install Node.js using nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
@@ -18,7 +18,9 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Install dfx
+ENV DFXVM_INIT_YES=true
 RUN sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+ENV PATH="/root/.local/share/dfx/bin:$PATH"
 
 # Add wasm32-unknown-unknown target
 RUN rustup target add wasm32-unknown-unknown
