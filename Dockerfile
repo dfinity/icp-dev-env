@@ -8,7 +8,7 @@ ENV POCKET_IC_SERVER_VERSION=3.0.1
 ENV POCKET_IC_PYTHON_VERSION=2.1.0
 
 RUN apt -yq update
-RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip
+RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip ssh
 
 # Install Node.js using nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
