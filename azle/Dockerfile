@@ -10,4 +10,4 @@ RUN apt -yq update && \
 # Install dfx
 ENV DFXVM_INIT_YES=true
 RUN sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
-RUN source "$HOME/.local/share/dfx/env"
+ENV PATH="/root/.local/share/dfx/bin:$PATH"
