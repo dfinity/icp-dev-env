@@ -19,5 +19,5 @@ RUN git clone https://github.com/demergent-labs/wasmedge-quickjs && cd wasmedge-
 RUN mkdir -p ${HOME}/.config/azle
 RUN mv /wasmedge-quickjs ${HOME}/.config/azle/wasmedge_quickjs_$(npx azle@0.21.0-rc.0 dockerfile-hash)
 
-# clean apt
+# Clean apt
 RUN apt-get autoremove && apt-get clean
