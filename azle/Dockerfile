@@ -17,8 +17,7 @@ RUN cargo install --git https://github.com/wasm-forge/wasi2ic --rev 806c3558aad2
 
 RUN git clone https://github.com/demergent-labs/wasmedge-quickjs && cd wasmedge-quickjs && git checkout 6c81d7e6fe4b22a468beceed0ee697f4163e7ca8
 RUN mkdir -p ${HOME}/.config/azle
-RUN npx azle@0.21.0-rc.0 dockerfile-hash
-RUN cp -r /wasmedge-quickjs ${HOME}/.config/azle/wasmedge_quickjs_$(npx azle@0.21.0-rc.0 dockerfile-hash)
+RUN mv /wasmedge-quickjs ${HOME}/.config/azle/wasmedge_quickjs_$(npx azle@0.21.0-rc.0 dockerfile-hash)
 
 # clean apt
 RUN apt-get autoremove && apt-get clean
