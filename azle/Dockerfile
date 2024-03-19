@@ -9,6 +9,7 @@ RUN apt-get -yqq install --no-install-recommends curl ca-certificates \
 RUN DFX_VERSION=0.18.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 
+# Dug out from [here](https://github.com/demergent-labs/azle/blob/main/.github/workflows/test.yml#L251)
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain=1.73.0 --profile=minimal
 ENV PATH="/root/.cargo/bin:$PATH"
 RUN rustup target add wasm32-wasi
