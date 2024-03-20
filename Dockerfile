@@ -18,8 +18,7 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Install dfx
-ENV DFXVM_INIT_YES=true
-RUN sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 ENV DFX_VERSION=
 
@@ -33,3 +32,6 @@ RUN pip3 install pocket-ic==${POCKET_IC_PYTHON_VERSION} --break-system-packages
 RUN curl -Ls https://github.com/dfinity/pocketic/releases/download/${POCKET_IC_SERVER_VERSION}/pocket-ic-x86_64-linux.gz -o pocket-ic.gz
 RUN gzip -d pocket-ic.gz
 RUN chmod +x pocket-ic
+
+# Clean apt
+RUN apt-get autoremove && apt-get clean
