@@ -6,7 +6,7 @@ RUN apt-get -yqq install --no-install-recommends curl ca-certificates \
     build-essential pkg-config libssl-dev llvm-dev liblmdb-dev clang cmake rsync git
 
 # Install dfx
-RUN DFX_VERSION=0.18.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN DFX_VERSION=0.19.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 
 # Dug out from [here](https://github.com/demergent-labs/azle/blob/main/.github/workflows/test.yml#L251)
