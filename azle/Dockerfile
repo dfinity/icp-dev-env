@@ -7,7 +7,7 @@ RUN apt-get -yqq install --no-install-recommends curl ca-certificates \
     libunwind-dev
 
 # Install dfx
-RUN DFX_VERSION=0.23.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN DFX_VERSION=0.24.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 
 # Dug out from [here](https://github.com/demergent-labs/azle/blob/main/.github/workflows/test.yml#L251)
