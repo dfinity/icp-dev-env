@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 rust:1.75-slim-bookworm
+FROM --platform=linux/amd64 rust:1.82-slim-bookworm
 
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
@@ -24,7 +24,9 @@ ENV DFX_VERSION=
 RUN rustup target add wasm32-unknown-unknown
 
 # Install candid-extractor
-RUN cargo install candid-extractor
+RUN curl -fsSL https://github.com/dfinity/candid-extractor/releases/download/0.1.5/candid-extractor-x86_64-unknown-linux-gnu.tar.gz -o candid-extractor.tar.gz
+RUN tar -xvf candid-extractor.tar.gz && rm candid-extractor.tar.gz
+RUN mv candid-extractor /usr/local/bin
 
 # Clean apt
 RUN apt-get autoremove && apt-get clean

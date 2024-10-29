@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 rust:1.75-slim-bookworm
+FROM --platform=linux/amd64 rust:1.82-slim-bookworm
 
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
