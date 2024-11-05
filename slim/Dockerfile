@@ -15,6 +15,9 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm install ${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
+# Install ic-mops
+RUN npm install -g ic-mops
+
 # Install dfx
 RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
