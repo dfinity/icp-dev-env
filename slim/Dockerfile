@@ -3,7 +3,7 @@ FROM --platform=linux/amd64 rust:1.82-slim-bookworm
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
-ENV DFX_VERSION=0.24.1
+ENV DFX_VERSION=0.24.2
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
