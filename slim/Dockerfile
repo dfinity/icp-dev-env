@@ -3,7 +3,6 @@ FROM --platform=linux/amd64 rust:1.82-slim-bookworm
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
-ENV DFX_VERSION=0.24.1
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
@@ -19,9 +18,8 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 RUN npm install -g ic-mops
 
 # Install dfx
-RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN DFX_VERSION=0.24.2 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
-ENV DFX_VERSION=
 
 # Add wasm32-unknown-unknown target
 RUN rustup target add wasm32-unknown-unknown
