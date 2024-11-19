@@ -21,7 +21,7 @@ RUN npm install -g ic-mops
 # Install dfx
 RUN DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
-ENV DFX_VERSION=
+RUN unset DFX_VERSION
 
 # Add wasm32-unknown-unknown target
 RUN rustup target add wasm32-unknown-unknown
