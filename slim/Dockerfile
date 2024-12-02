@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 rust:1.82-slim-bookworm
+FROM --platform=linux/amd64 rust:1.83-slim-bookworm
 
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
@@ -18,7 +18,7 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 RUN npm install -g ic-mops
 
 # Install dfx
-RUN DFX_VERSION=0.24.2 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+RUN DFX_VERSION=0.24.3 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 ENV PATH="/root/.local/share/dfx/bin:$PATH"
 
 # Add wasm32-unknown-unknown target
