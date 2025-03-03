@@ -3,8 +3,8 @@ FROM --platform=linux/amd64 rust:1.83-slim-bookworm
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
-ENV POCKET_IC_SERVER_VERSION=7.0.0
-ENV POCKET_IC_PYTHON_VERSION=3.0.0
+ENV POCKET_IC_SERVER_VERSION=8.0.0
+ENV POCKET_IC_PYTHON_VERSION=3.0.1
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git python3 python3-pip ssh
