@@ -3,6 +3,7 @@ FROM --platform=linux/amd64 rust:1.83-slim-bookworm
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
+ENV IC_MOPS_VERSION=1.8.0
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
@@ -15,7 +16,7 @@ RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
 RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Install ic-mops
-RUN npm install -g ic-mops
+RUN npm install -g ic-mops@${IC_MOPS_VERSION}
 
 # Install dfx
 RUN DFX_VERSION=0.27.0 DFXVM_INIT_YES=true sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
