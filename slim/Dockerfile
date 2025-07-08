@@ -5,15 +5,15 @@ ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
 ENV IC_MOPS_VERSION=1.8.0
 
-RUN apt -yq update
-RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
+RUN apt -yq update \
+    && apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
 
 # Install Node.js using nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
-RUN curl --fail -sSf https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash
-RUN . "${NVM_DIR}/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION}
-RUN . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
+RUN curl --fail -sSf https://raw.githubusercontent.com/creationix/nvm/${NVM_VERSION}/install.sh | bash \
+    && . "${NVM_DIR}/nvm.sh" && nvm install ${NODE_VERSION} \
+    && . "${NVM_DIR}/nvm.sh" && nvm use v${NODE_VERSION} \
+    && . "${NVM_DIR}/nvm.sh" && nvm alias default v${NODE_VERSION}
 
 # Install ic-mops
 RUN npm install -g ic-mops@${IC_MOPS_VERSION}
@@ -26,9 +26,10 @@ ENV PATH="/root/.local/share/dfx/bin:$PATH"
 RUN rustup target add wasm32-unknown-unknown
 
 # Install candid-extractor
-RUN curl -fsSL https://github.com/dfinity/candid-extractor/releases/download/0.1.5/candid-extractor-x86_64-unknown-linux-gnu.tar.gz -o candid-extractor.tar.gz
-RUN tar -xvf candid-extractor.tar.gz && rm candid-extractor.tar.gz
-RUN mv candid-extractor /usr/local/bin
+RUN curl -fsSL https://github.com/dfinity/candid-extractor/releases/download/0.1.5/candid-extractor-x86_64-unknown-linux-gnu.tar.gz -o candid-extractor.tar.gz \
+    && tar -xvf candid-extractor.tar.gz \
+    && rm candid-extractor.tar.gz \
+    && mv candid-extractor /usr/local/bin
 
 # Clean apt
 RUN apt-get autoremove && apt-get clean
