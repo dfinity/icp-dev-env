@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  main:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: icp-dev-env:latest
+
+  slim:
+    build:
+      context: ./slim
+      dockerfile: Dockerfile
+    image: icp-dev-env-slim:latest
+
+  azle:
+    build:
+      context: ./azle
+      dockerfile: Dockerfile
+    image: icp-dev-env-azle:latest
