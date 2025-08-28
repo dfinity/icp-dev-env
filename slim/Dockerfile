@@ -1,9 +1,10 @@
-FROM --platform=linux/amd64 rust:1.89-slim-bookworm
+FROM rust:1.89-slim-bookworm
 
 ENV NVM_DIR=/root/.nvm
 ENV NVM_VERSION=v0.40.1
 ENV NODE_VERSION=22.10.0
 ENV IC_MOPS_VERSION=1.11.1
+ENV CANDID_EXTRACTOR_VERSION=0.1.6
 
 RUN apt -yq update
 RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
@@ -26,9 +27,7 @@ ENV PATH="/root/.local/share/dfx/bin:$PATH"
 RUN rustup target add wasm32-unknown-unknown
 
 # Install candid-extractor
-RUN curl -fsSL https://github.com/dfinity/candid-extractor/releases/download/0.1.6/candid-extractor-x86_64-unknown-linux-gnu.tar.gz -o candid-extractor.tar.gz
-RUN tar -xvf candid-extractor.tar.gz && rm candid-extractor.tar.gz
-RUN mv candid-extractor /usr/local/bin
+RUN cargo install candid-extractor --version ${CANDID_EXTRACTOR_VERSION}
 
 # Clean apt
 RUN apt-get autoremove && apt-get clean
