@@ -7,7 +7,7 @@ ENV IC_MOPS_VERSION=1.11.1
 ENV CANDID_EXTRACTOR_VERSION=0.1.6
 
 RUN apt -yq update
-RUN apt -yqq install --no-install-recommends curl ca-certificates libunwind-dev git
+RUN apt -yqq install --no-install-recommends clang curl ca-certificates libunwind-dev git
 
 # Install Node.js using nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
