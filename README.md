@@ -14,7 +14,7 @@ For Motoko canister development.
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [mops](https://mops.one) | 2.13.2 |
 | moc | installed per-project via `mops install` |
-| Node.js | 22.10.0 |
+| Node.js | 24.15.0 |
 | pnpm | latest |
 
 ```bash
@@ -31,7 +31,7 @@ For Rust canister development.
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | Rust | 1.89 |
 | wasm32-unknown-unknown target | — |
-| Node.js | 22.10.0 |
+| Node.js | 24.15.0 |
 | pnpm | latest |
 
 ```bash
