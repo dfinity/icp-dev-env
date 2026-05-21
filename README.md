@@ -12,8 +12,8 @@ For Motoko canister development.
 |---|---|
 | [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
-| [moc](https://github.com/dfinity/motoko) | 1.8.1 |
 | [mops](https://mops.one) | 2.13.2 |
+| moc | installed per-project via `mops install` |
 | Node.js | 22.10.0 |
 | pnpm | latest |
 
