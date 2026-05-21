@@ -1,18 +1,18 @@
-FROM debian:bookworm-slim
+FROM ubuntu:24.04
 
 ARG NODE_VERSION=22.10.0
 ARG NVM_VERSION=v0.40.1
-ARG MOC_VERSION=1.5.1
-ARG ICP_CLI_VERSION=latest
-ARG IC_WASM_VERSION=latest
-ARG IC_MOPS_VERSION=1.11.1
+ARG MOC_VERSION=1.8.1
+ARG ICP_CLI_VERSION=0.2.7
+ARG IC_WASM_VERSION=0.9.11
+ARG IC_MOPS_VERSION=2.13.2
 
 ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
 ENV MOPS_CACHE=/root/.cache/mops
 
-RUN apt-get -yq update && apt-get -yqq install --no-install-recommends \
-    curl ca-certificates git libunwind-dev && \
+RUN apt-get -yq update && apt-get -yq upgrade && apt-get -yqq install --no-install-recommends \
+    curl ca-certificates git && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Node.js via nvm (required for icp-cli, ic-wasm, mops)
