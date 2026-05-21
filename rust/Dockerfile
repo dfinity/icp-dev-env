@@ -1,4 +1,4 @@
-FROM rust:1.89-slim-bookworm
+FROM rust:1.95.0-slim-bookworm
 
 ARG NODE_VERSION=24.15.0
 ARG NVM_VERSION=v0.40.1

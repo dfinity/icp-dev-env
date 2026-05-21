@@ -29,7 +29,7 @@ For Rust canister development.
 |---|---|
 | [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
-| Rust | 1.89 |
+| Rust | 1.95.0 |
 | wasm32-unknown-unknown target | — |
 | Node.js | 24.15.0 |
 | pnpm | latest |
