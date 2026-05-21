@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM debian:bookworm-slim
 
 ARG NODE_VERSION=22.10.0
 ARG NVM_VERSION=v0.40.1
