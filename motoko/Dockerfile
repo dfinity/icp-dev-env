@@ -10,7 +10,7 @@ ENV NVM_DIR=/root/.nvm
 ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin:${PATH}"
 
 RUN apt-get -yq update && apt-get -yq upgrade && apt-get -yqq install --no-install-recommends \
-    curl ca-certificates git && \
+    curl ca-certificates git libdbus-1-3 && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Node.js via nvm (required for icp-cli, ic-wasm, mops)
