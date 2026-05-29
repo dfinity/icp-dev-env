@@ -32,6 +32,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
           tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU
@@ -69,6 +70,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
           tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU
@@ -106,6 +108,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
           tags: |
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU

@@ -15,10 +15,11 @@ For Motoko canister development.
 | [mops](https://mops.one) | 2.13.2 |
 | moc | installed per-project via `mops install` |
 | Node.js | 24.15.0 |
-| pnpm | latest |
+| pnpm | 11.4.0 |
 
 ```bash
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -32,10 +33,11 @@ For Rust canister development.
 | Rust | 1.95.0 |
 | wasm32-unknown-unknown target | — |
 | Node.js | 24.15.0 |
-| pnpm | latest |
+| pnpm | 11.4.0 |
 
 ```bash
-docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0
+docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -51,10 +53,11 @@ Combined Motoko and Rust development environment. Use this when your project inc
 | Rust | 1.95.0 |
 | wasm32-unknown-unknown target | — |
 | Node.js | 24.15.0 |
-| pnpm | latest |
+| pnpm | 11.4.0 |
 
 ```bash
-docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0
+docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0    # pinned
 ```
 
 ## Usage
@@ -64,7 +67,7 @@ Reference the image in your `.devcontainer/devcontainer.json`:
 ```json
 {
   "name": "My Example (Motoko)",
-  "image": "ghcr.io/dfinity/icp-dev-env-motoko:1.0.0",
+  "image": "ghcr.io/dfinity/icp-dev-env-motoko:latest",
   "workspaceFolder": "/workspaces/examples/motoko/my-example",
   "forwardPorts": [8000],
   "portsAttributes": {
