@@ -2,9 +2,6 @@ name: Create and publish Docker images
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feat/icp-cli-images
   release:
     types: [published]
 
@@ -35,7 +32,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
           tags: |
-            type=raw,value=dev,enable=${{ github.ref_name == 'feat/icp-cli-images' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU
@@ -73,7 +69,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
           tags: |
-            type=raw,value=dev,enable=${{ github.ref_name == 'feat/icp-cli-images' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU
@@ -111,7 +106,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
           tags: |
-            type=raw,value=dev,enable=${{ github.ref_name == 'feat/icp-cli-images' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
       - name: Set up QEMU
