@@ -18,7 +18,7 @@ For Motoko canister development.
 | pnpm | latest |
 
 ```bash
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0
 ```
 
 ### `icp-dev-env-rust`
@@ -35,7 +35,26 @@ For Rust canister development.
 | pnpm | latest |
 
 ```bash
-docker pull ghcr.io/dfinity/icp-dev-env-rust:latest
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0
+```
+
+### `icp-dev-env-all`
+
+Combined Motoko and Rust development environment. Use this when your project includes both Motoko and Rust canisters.
+
+| Tool | Version |
+|---|---|
+| [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
+| [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| [mops](https://mops.one) | 2.13.2 |
+| moc | installed per-project via `mops install` |
+| Rust | 1.95.0 |
+| wasm32-unknown-unknown target | — |
+| Node.js | 24.15.0 |
+| pnpm | latest |
+
+```bash
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0
 ```
 
 ## Usage
@@ -45,7 +64,7 @@ Reference the image in your `.devcontainer/devcontainer.json`:
 ```json
 {
   "name": "My Example (Motoko)",
-  "image": "ghcr.io/dfinity/icp-dev-env-motoko:latest",
+  "image": "ghcr.io/dfinity/icp-dev-env-motoko:1.0.0",
   "workspaceFolder": "/workspaces/examples/motoko/my-example",
   "forwardPorts": [8000],
   "portsAttributes": {
@@ -67,7 +86,9 @@ See [dfinity/examples](https://github.com/dfinity/examples) for full usage acros
 
 Tool versions are pinned via `ARG` in each Dockerfile. To update a version:
 
-1. Update the relevant `ARG` in `motoko/Dockerfile` and/or `rust/Dockerfile`
-2. Create a new GitHub release — the CI pipeline builds and pushes both images to GHCR
+1. Update the relevant `ARG` in the affected Dockerfile(s) (`motoko/Dockerfile`, `rust/Dockerfile`, `all/Dockerfile`)
+2. Create a new GitHub Release with a semver tag (e.g. `v1.0.1`) — the CI pipeline builds and pushes all images to GHCR
 
 Images are built for `linux/amd64` and `linux/arm64`.
+
+> **Note:** The release must be published as non-draft to trigger the CI pipeline.
