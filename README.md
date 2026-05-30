@@ -1,33 +1,97 @@
 # ICP Developer Environment
 
-This repo contains Docker images that are used for setting up a remote, hybrid or local development environments for new developers on the Internet Computer.
+Docker images for ICP canister development, designed for use with GitHub Codespaces and local dev containers.
+
+## Images
+
+### `icp-dev-env-motoko`
+
+For Motoko canister development.
+
+| Tool | Version |
+|---|---|
+| [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
+| [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| [mops](https://mops.one) | 2.13.2 |
+| moc | installed per-project via `mops install` |
+| Node.js | 24.15.0 |
+| pnpm | 11.4.0 |
+
+```bash
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0    # pinned
+```
+
+### `icp-dev-env-rust`
+
+For Rust canister development.
+
+| Tool | Version |
+|---|---|
+| [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
+| [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| Rust | 1.95.0 |
+| wasm32-unknown-unknown target | — |
+| Node.js | 24.15.0 |
+| pnpm | 11.4.0 |
+
+```bash
+docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0    # pinned
+```
+
+### `icp-dev-env-all`
+
+Combined Motoko and Rust development environment. Use this when your project includes both Motoko and Rust canisters.
+
+| Tool | Version |
+|---|---|
+| [icp-cli](https://cli.internetcomputer.org) | 0.2.7 |
+| [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| [mops](https://mops.one) | 2.13.2 |
+| moc | installed per-project via `mops install` |
+| Rust | 1.95.0 |
+| wasm32-unknown-unknown target | — |
+| Node.js | 24.15.0 |
+| pnpm | 11.4.0 |
+
+```bash
+docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0    # pinned
+```
 
 ## Usage
-These container images can be used as a base for creating a dev container environment that targets ICP development.
-Take a look at the repositories below to see dev containers in action:
-- [Hello World Motoko with testing infrastructure](https://github.com/dfinity/icp-hello-world-motoko)
-- [Hello World Rust with testing infrastructure](https://github.com/dfinity/icp-hello-world-rust)
-- [Rust with React and Ethereum integration](https://github.com/fxgst/evm-rpc-rust)
-- [Azle (JS/TS) with React](https://github.com/fxgst/azle-react)
-- [Azle (JS/TS) Message Board Contract from dacadeorg](https://github.com/dacadeorg/icp-message-board-contract)
-- [Azle (JS/TS) 201 from dacadeorg](https://github.com/dacadeorg/icp-azle-201)
 
-### Packages and Releases 
-On the right side, you will find new releases and the latest packages.
-You can download the Docker image for Rust/Motoko with 
+Reference the image in your `.devcontainer/devcontainer.json`:
 
-```bash
-docker pull ghcr.io/dfinity/icp-dev-env:latest
+```json
+{
+  "name": "My Example (Motoko)",
+  "image": "ghcr.io/dfinity/icp-dev-env-motoko:latest",
+  "workspaceFolder": "/workspaces/examples/motoko/my-example",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": { "label": "ICP local network", "onAutoForward": "ignore" }
+  },
+  "postCreateCommand": "mops install",
+  "postStartCommand": "icp network start -d",
+  "customizations": {
+    "vscode": {
+      "extensions": ["dfinity-foundation.vscode-motoko", "stateful.runme"]
+    }
+  }
+}
 ```
 
-or the one for [Azle](https://github.com/demergent-labs/azle) (JavaScript and TypeScript) with
+See [dfinity/examples](https://github.com/dfinity/examples) for full usage across all examples.
 
-```bash
-docker pull ghcr.io/dfinity/icp-dev-env-azle:latest
-```
+## Releasing
 
-To download a specific version, add `:<version>` at the end instead of `:latest`.
+Tool versions are pinned via `ARG` in each Dockerfile. To update a version:
 
-## Creating a new Release
-To release a new version of both images, create a new tag with the corresponding version number.
-The CI pipeline will automatically build and push the new images to the GitHub Container Registry (ghcr.io).
+1. Update the relevant `ARG` in the affected Dockerfile(s) (`motoko/Dockerfile`, `rust/Dockerfile`, `all/Dockerfile`)
+2. Create a new GitHub Release with a semver tag (e.g. `v1.0.1`) — the CI pipeline builds and pushes all images to GHCR
+
+Images are built for `linux/amd64` and `linux/arm64`.
+
+> **Note:** The release must be published as non-draft to trigger the CI pipeline.
