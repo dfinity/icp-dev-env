@@ -12,7 +12,8 @@ env:
   IMAGE_NAME_ALL: ${{ github.repository }}-all
 
 jobs:
-  build-and-push-image-motoko:
+  # ── motoko ──────────────────────────────────────────────────────────────────
+  build-motoko-amd64:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,7 +27,76 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/amd64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/amd64
+          context: motoko
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}:${{ github.sha }}-amd64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
+          cache-from: type=gha,scope=motoko-amd64
+          cache-to: type=gha,mode=max,scope=motoko-amd64
+
+  build-motoko-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/arm64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/arm64
+          context: motoko
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}:${{ github.sha }}-arm64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
+          cache-from: type=gha,scope=motoko-arm64
+          cache-to: type=gha,mode=max,scope=motoko-arm64
+
+  merge-motoko:
+    needs: [build-motoko-amd64, build-motoko-arm64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags)
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
@@ -35,22 +105,17 @@ jobs:
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push Docker image
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: motoko
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
+      - name: Create and push multi-arch manifest
+        run: |
+          TAGS=$(echo "${{ steps.meta.outputs.tags }}" | sed 's/^/--tag /' | tr '\n' ' ')
+          docker buildx imagetools create $TAGS \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}:${{ github.sha }}-amd64 \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}:${{ github.sha }}-arm64
 
-  build-and-push-image-rust:
+  # ── rust ────────────────────────────────────────────────────────────────────
+  build-rust-amd64:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -64,7 +129,76 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/amd64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/amd64
+          context: rust
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}:${{ github.sha }}-amd64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
+          cache-from: type=gha,scope=rust-amd64
+          cache-to: type=gha,mode=max,scope=rust-amd64
+
+  build-rust-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/arm64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/arm64
+          context: rust
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}:${{ github.sha }}-arm64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
+          cache-from: type=gha,scope=rust-arm64
+          cache-to: type=gha,mode=max,scope=rust-arm64
+
+  merge-rust:
+    needs: [build-rust-amd64, build-rust-arm64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags)
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
@@ -73,22 +207,17 @@ jobs:
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push Docker image
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: rust
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
+      - name: Create and push multi-arch manifest
+        run: |
+          TAGS=$(echo "${{ steps.meta.outputs.tags }}" | sed 's/^/--tag /' | tr '\n' ' ')
+          docker buildx imagetools create $TAGS \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}:${{ github.sha }}-amd64 \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}:${{ github.sha }}-arm64
 
-  build-and-push-image-all:
+  # ── all ─────────────────────────────────────────────────────────────────────
+  build-all-amd64:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -102,7 +231,76 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/amd64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/amd64
+          context: all
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}:${{ github.sha }}-amd64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
+          cache-from: type=gha,scope=all-amd64
+          cache-to: type=gha,mode=max,scope=all-amd64
+
+  build-all-arm64:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (labels)
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+      - name: Build and push linux/arm64
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
+        with:
+          platforms: linux/arm64
+          context: all
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}:${{ github.sha }}-arm64
+          labels: |
+            ${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
+          cache-from: type=gha,scope=all-arm64
+          cache-to: type=gha,mode=max,scope=all-arm64
+
+  merge-all:
+    needs: [build-all-amd64, build-all-arm64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags)
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
@@ -111,17 +309,11 @@ jobs:
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
             type=semver,pattern={{version}}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4.0.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push Docker image
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: all
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
+      - name: Create and push multi-arch manifest
+        run: |
+          TAGS=$(echo "${{ steps.meta.outputs.tags }}" | sed 's/^/--tag /' | tr '\n' ' ')
+          docker buildx imagetools create $TAGS \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}:${{ github.sha }}-amd64 \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}:${{ github.sha }}-arm64
