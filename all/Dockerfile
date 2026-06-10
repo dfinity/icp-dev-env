@@ -3,8 +3,9 @@ FROM rust:1.95.0-slim-bookworm
 ARG NODE_VERSION=24.15.0
 ARG NVM_VERSION=v0.40.1
 ARG PNPM_VERSION=11.4.0
-ARG ICP_CLI_VERSION=0.3.1
+ARG ICP_CLI_VERSION=0.3.2
 ARG IC_WASM_VERSION=0.9.11
+ARG CANDID_EXTRACTOR_VERSION=0.1.4
 ARG IC_MOPS_VERSION=2.13.2
 
 ENV NVM_DIR=/root/.nvm
@@ -28,6 +29,10 @@ RUN npm install -g @icp-sdk/icp-cli@${ICP_CLI_VERSION} @icp-sdk/ic-wasm@${IC_WAS
 
 # wasm32 target for Rust canister compilation
 RUN rustup target add wasm32-unknown-unknown
+
+# candid-extractor — uses pre-built binary on amd64, falls back to cargo install on arm64
+RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash && \
+    cargo binstall --no-confirm candid-extractor@${CANDID_EXTRACTOR_VERSION}
 
 # mops (Motoko package manager) — moc is installed per-project via mops install
 RUN npm install -g ic-mops@${IC_MOPS_VERSION}

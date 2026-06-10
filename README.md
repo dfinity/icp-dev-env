@@ -10,7 +10,7 @@ For Motoko canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.1 |
+| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [mops](https://mops.one) | 2.13.2 |
 | moc | installed per-project via `mops install` |
@@ -19,7 +19,7 @@ For Motoko canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:0.3.1    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:0.3.2    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -28,8 +28,9 @@ For Rust canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.1 |
+| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
 | Rust | 1.95.0 |
 | wasm32-unknown-unknown target | — |
 | Node.js | 24.15.0 |
@@ -37,7 +38,7 @@ For Rust canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:0.3.1    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:0.3.2    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -46,8 +47,9 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.1 |
+| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
+| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
 | [mops](https://mops.one) | 2.13.2 |
 | moc | installed per-project via `mops install` |
 | Rust | 1.95.0 |
@@ -57,7 +59,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:0.3.1    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:0.3.2    # pinned
 ```
 
 ## Usage
