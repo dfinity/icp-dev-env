@@ -7,19 +7,31 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_MOTOKO: ${{ github.repository }}-motoko
-  IMAGE_NAME_RUST: ${{ github.repository }}-rust
-  IMAGE_NAME_ALL: ${{ github.repository }}-all
 
 jobs:
-  # ── motoko ──────────────────────────────────────────────────────────────────
-  build-motoko-amd64:
-    runs-on: ubuntu-latest
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
+  # build the arm64 and amd64 images on runners that match the target architecture
+  build:
+    name: build-${{ matrix.image }}-${{ matrix.platform.arch }}
+    runs-on: ${{ matrix.platform.runner }}
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [motoko, rust, all]
+        platform:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+        include:
+          - image: motoko
+            description: A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
+          - image: rust
+            description: A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
+          - image: all
+            description: A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -33,67 +45,60 @@ jobs:
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.image }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/amd64 by digest
+      - name: Build and push by digest
         id: build
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
-          platforms: linux/amd64
-          context: motoko
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }},push-by-digest=true,name-canonical=true,push=true
+          platforms: linux/${{ matrix.platform.arch }}
+          context: ${{ matrix.image }}
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
           labels: |
             ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
-          cache-from: type=gha,scope=motoko-amd64
-          cache-to: type=gha,mode=max,scope=motoko-amd64
+            org.opencontainers.image.description=${{ matrix.description }}
+          cache-from: type=gha,scope=${{ matrix.image }}-${{ matrix.platform.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}-${{ matrix.platform.arch }}
+      # Each leg pushes an untagged single-arch image and must hand its digest to the
+      # merge job. Job outputs can't be used: all matrix legs share one output namespace,
+      # so the legs would overwrite each other. Instead, each leg uploads an artifact
+      # containing an empty file named after the digest; merge recovers the digests from
+      # the filenames.
+      - name: Export digest
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: digests-${{ matrix.image }}-${{ matrix.platform.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
-  build-motoko-arm64:
-    runs-on: ubuntu-24.04-arm
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/arm64 by digest
-        id: build
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/arm64
-          context: motoko
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }},push-by-digest=true,name-canonical=true,push=true
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Motoko canister development environment for the Internet Computer (ICP) with icp-cli, moc, and mops.
-          cache-from: type=gha,scope=motoko-arm64
-          cache-to: type=gha,mode=max,scope=motoko-arm64
-
-  merge-motoko:
-    needs: [build-motoko-amd64, build-motoko-arm64]
+  # Merge the arm/amd images under one manifest
+  merge:
+    name: merge-${{ matrix.image }}
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [motoko, rust, all]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # Pull both arch digests for this image (passed as digest-named artifact files
+      # from the build legs) into one directory.
+      - name: Download digests
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.image }}-*
+          merge-multiple: true
       - name: Log in to the Container registry
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
@@ -104,7 +109,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.image }}
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' }}
             type=ref,event=branch
@@ -113,222 +118,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
       - name: Create and push multi-arch manifest
+        working-directory: ${{ runner.temp }}/digests
         run: |
-          TAGS=$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | awk NF | sed 's/^/--tag /' | tr '\n' ' ')
-          docker buildx imagetools create $TAGS \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}@${{ needs.build-motoko-amd64.outputs.digest }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_MOTOKO }}@${{ needs.build-motoko-arm64.outputs.digest }}
-
-  # ── rust ────────────────────────────────────────────────────────────────────
-  build-rust-amd64:
-    runs-on: ubuntu-latest
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/amd64 by digest
-        id: build
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/amd64
-          context: rust
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }},push-by-digest=true,name-canonical=true,push=true
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
-          cache-from: type=gha,scope=rust-amd64
-          cache-to: type=gha,mode=max,scope=rust-amd64
-
-  build-rust-arm64:
-    runs-on: ubuntu-24.04-arm
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/arm64 by digest
-        id: build
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/arm64
-          context: rust
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }},push-by-digest=true,name-canonical=true,push=true
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A Rust canister development environment for the Internet Computer (ICP) with icp-cli and Rust toolchain.
-          cache-from: type=gha,scope=rust-arm64
-          cache-to: type=gha,mode=max,scope=rust-arm64
-
-  merge-rust:
-    needs: [build-rust-amd64, build-rust-arm64]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}
-          tags: |
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
-            type=ref,event=branch
-            type=ref,event=tag
-            type=semver,pattern={{version}}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Create and push multi-arch manifest
-        run: |
-          TAGS=$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | awk NF | sed 's/^/--tag /' | tr '\n' ' ')
-          docker buildx imagetools create $TAGS \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}@${{ needs.build-rust-amd64.outputs.digest }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_RUST }}@${{ needs.build-rust-arm64.outputs.digest }}
-
-  # ── all ─────────────────────────────────────────────────────────────────────
-  build-all-amd64:
-    runs-on: ubuntu-latest
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/amd64 by digest
-        id: build
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/amd64
-          context: all
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }},push-by-digest=true,name-canonical=true,push=true
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
-          cache-from: type=gha,scope=all-amd64
-          cache-to: type=gha,mode=max,scope=all-amd64
-
-  build-all-arm64:
-    runs-on: ubuntu-24.04-arm
-    outputs:
-      digest: ${{ steps.build.outputs.digest }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (labels)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Build and push linux/arm64 by digest
-        id: build
-        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
-        with:
-          platforms: linux/arm64
-          context: all
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }},push-by-digest=true,name-canonical=true,push=true
-          labels: |
-            ${{ steps.meta.outputs.labels }}
-            org.opencontainers.image.description=A combined Motoko and Rust canister development environment for the Internet Computer (ICP) with icp-cli, Rust toolchain, and mops.
-          cache-from: type=gha,scope=all-arm64
-          cache-to: type=gha,mode=max,scope=all-arm64
-
-  merge-all:
-    needs: [build-all-amd64, build-all-arm64]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags)
-        id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}
-          tags: |
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
-            type=ref,event=branch
-            type=ref,event=tag
-            type=semver,pattern={{version}}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
-      - name: Create and push multi-arch manifest
-        run: |
-          TAGS=$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | awk NF | sed 's/^/--tag /' | tr '\n' ' ')
-          docker buildx imagetools create $TAGS \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}@${{ needs.build-all-amd64.outputs.digest }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_ALL }}@${{ needs.build-all-arm64.outputs.digest }}
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("--tag " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.image }}@sha256:%s ' *)
