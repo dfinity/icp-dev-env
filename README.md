@@ -10,9 +10,9 @@ For Motoko canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.0.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
-| [mops](https://mops.one) | 2.13.2 |
+| [mops](https://mops.one) | 2.14.1 |
 | moc | installed per-project via `mops install` |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
 | Node.js | 24.15.0 |
@@ -20,7 +20,7 @@ For Motoko canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:0.3.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -29,7 +29,7 @@ For Rust canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.0.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
@@ -40,7 +40,7 @@ For Rust canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:0.3.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -49,10 +49,10 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 0.3.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.0.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
-| [mops](https://mops.one) | 2.13.2 |
+| [mops](https://mops.one) | 2.14.1 |
 | moc | installed per-project via `mops install` |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
 | Rust | 1.95.0 |
@@ -62,7 +62,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:0.3.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0    # pinned
 ```
 
 ## Usage
