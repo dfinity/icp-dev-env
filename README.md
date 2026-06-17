@@ -20,7 +20,7 @@ For Motoko canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.1    # pinned
 ```
 
 ### `icp-dev-env-rust`
