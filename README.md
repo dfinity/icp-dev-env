@@ -40,7 +40,7 @@ For Rust canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.1    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -62,7 +62,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.1    # pinned
 ```
 
 ## Usage
