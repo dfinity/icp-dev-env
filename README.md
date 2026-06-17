@@ -31,7 +31,7 @@ For Rust canister development.
 |---|---|
 | [icp-cli](https://cli.internetcomputer.org) | 1.0.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
-| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
+| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
 | Rust | 1.95.0 |
 | wasm32-unknown-unknown target | — |
@@ -51,7 +51,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 |---|---|
 | [icp-cli](https://cli.internetcomputer.org) | 1.0.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
-| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.4 |
+| [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
 | [mops](https://mops.one) | 2.14.1 |
 | moc | installed per-project via `mops install` |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
