@@ -10,7 +10,7 @@ For Motoko canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.0.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.1.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [mops](https://mops.one) | 2.16.1 |
 | moc | installed per-project via `mops install` |
@@ -20,7 +20,7 @@ For Motoko canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.0.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:1.1.0    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -29,7 +29,7 @@ For Rust canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.0.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.1.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
 | [yq](https://github.com/mikefarah/yq) | 4.53.3 |
@@ -40,7 +40,7 @@ For Rust canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:1.0.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:1.1.0    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -49,7 +49,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.0.2 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.1.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.9.11 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
 | [mops](https://mops.one) | 2.16.1 |
@@ -62,7 +62,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:1.0.2    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:1.1.0    # pinned
 ```
 
 ## Usage
@@ -95,7 +95,7 @@ See [dfinity/examples](https://github.com/dfinity/examples) for full usage acros
 Tool versions are pinned via `ARG` in each Dockerfile. To update a version:
 
 1. Update the relevant `ARG` in the affected Dockerfile(s) (`motoko/Dockerfile`, `rust/Dockerfile`, `all/Dockerfile`)
-2. Create a new GitHub Release with a semver tag (e.g. `v1.0.2`) — the CI pipeline builds and pushes all images to GHCR
+2. Create a new GitHub Release with a semver tag (e.g. `v1.1.0`) — the CI pipeline builds and pushes all images to GHCR
 
 Images are built for `linux/amd64` and `linux/arm64`.
 
