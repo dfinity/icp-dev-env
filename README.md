@@ -12,7 +12,7 @@ For Motoko canister development.
 |---|---|
 | [icp-cli](https://cli.internetcomputer.org) | 1.5.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.11.1 |
-| [mops](https://mops.one) | 3.2.1 |
+| [mops](https://mops.one) | 3.2.2 |
 | moc | pinned per-project via `mops.toml` (`mops toolchain use moc <version>`) |
 | [yq](https://github.com/mikefarah/yq) | 4.53.6 |
 | Node.js | 24.21.0 |
@@ -20,7 +20,7 @@ For Motoko canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:2.2.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:2.2.1    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -40,7 +40,7 @@ For Rust canister development.
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:2.2.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:2.2.1    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -52,7 +52,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 | [icp-cli](https://cli.internetcomputer.org) | 1.5.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.11.1 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
-| [mops](https://mops.one) | 3.2.1 |
+| [mops](https://mops.one) | 3.2.2 |
 | moc | pinned per-project via `mops.toml` (`mops toolchain use moc <version>`) |
 | [yq](https://github.com/mikefarah/yq) | 4.53.6 |
 | Rust | 1.98.1 |
@@ -62,7 +62,7 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:2.2.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:2.2.1    # pinned
 ```
 
 ## Usage
