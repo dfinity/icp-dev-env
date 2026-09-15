@@ -10,17 +10,17 @@ For Motoko canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.4.0 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.5.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.11.1 |
-| [mops](https://mops.one) | 3.2.0 |
+| [mops](https://mops.one) | 3.2.1 |
 | moc | pinned per-project via `mops.toml` (`mops toolchain use moc <version>`) |
 | [yq](https://github.com/mikefarah/yq) | 4.53.6 |
-| Node.js | 24.20.0 |
-| pnpm | 11.25.0 |
+| Node.js | 24.21.0 |
+| pnpm | 11.26.0 |
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-motoko:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-motoko:2.1.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-motoko:2.2.0    # pinned
 ```
 
 ### `icp-dev-env-rust`
@@ -29,18 +29,18 @@ For Rust canister development.
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.4.0 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.5.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.11.1 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
 | [yq](https://github.com/mikefarah/yq) | 4.53.6 |
-| Rust | 1.98.0 |
+| Rust | 1.98.1 |
 | wasm32-unknown-unknown target | — |
-| Node.js | 24.20.0 |
-| pnpm | 11.25.0 |
+| Node.js | 24.21.0 |
+| pnpm | 11.26.0 |
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-rust:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-rust:2.1.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-rust:2.2.0    # pinned
 ```
 
 ### `icp-dev-env-all`
@@ -49,20 +49,20 @@ Combined Motoko and Rust development environment. Use this when your project inc
 
 | Tool | Version |
 |---|---|
-| [icp-cli](https://cli.internetcomputer.org) | 1.4.0 |
+| [icp-cli](https://cli.internetcomputer.org) | 1.5.0 |
 | [ic-wasm](https://github.com/dfinity/ic-wasm) | 0.11.1 |
 | [candid-extractor](https://github.com/dfinity/cdk-rs) | 0.1.6 |
-| [mops](https://mops.one) | 3.2.0 |
+| [mops](https://mops.one) | 3.2.1 |
 | moc | pinned per-project via `mops.toml` (`mops toolchain use moc <version>`) |
 | [yq](https://github.com/mikefarah/yq) | 4.53.6 |
-| Rust | 1.98.0 |
+| Rust | 1.98.1 |
 | wasm32-unknown-unknown target | — |
-| Node.js | 24.20.0 |
-| pnpm | 11.25.0 |
+| Node.js | 24.21.0 |
+| pnpm | 11.26.0 |
 
 ```bash
 docker pull ghcr.io/dfinity/icp-dev-env-all:latest   # always current
-docker pull ghcr.io/dfinity/icp-dev-env-all:2.1.0    # pinned
+docker pull ghcr.io/dfinity/icp-dev-env-all:2.2.0    # pinned
 ```
 
 ## Usage
